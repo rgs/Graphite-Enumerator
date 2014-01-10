@@ -24,7 +24,7 @@ $gren->enumerate( sub {
     my $last_hour_data_url = $gren->host . "render/?format=json&from=-$interval&target=summarize($path,%22$interval%22,%22max%22,true)";
     my $res = $gren->ua->get($last_hour_data_url);
     if ($res->is_success) {
-        my $last_hour_data = decode_json($res->decoded_content);
+        my $last_hour_data = decode_json($res->content);
         return if !$last_hour_data || !@$last_hour_data;
         my $datapoint = $last_hour_data->[0]{datapoints}[0][0];
         if (defined $datapoint) {

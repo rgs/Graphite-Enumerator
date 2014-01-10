@@ -32,8 +32,12 @@ sub enumerate {
     my $url = $self->{_finder} . $path;
     my $res = $self->{_ua}->get($url);
     if ($res->is_success) {
-        my $completer_answer = decode_json($res->decoded_content);
-        return 0 if !$completer_answer || !$completer_answer->{metrics};
+        my $completer_answer = eval { decode_json($res->content) };
+        if (!$completer_answer) {
+            $self->log_warning("URL <$url>: Couldn't decode JSON string: <" . $res->content . ">: $@");
+            return 0;
+        }
+        return 0 if !$completer_answer->{metrics};
         for my $metric (@{ $completer_answer->{metrics} }) {
             if ($metric->{is_leaf}) {
                 $callback->($metric->{path});
