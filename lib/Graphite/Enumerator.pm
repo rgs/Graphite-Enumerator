@@ -5,6 +5,8 @@ use Carp qw/croak/;
 use LWP::UserAgent;
 use JSON;
 
+our $VERSION = '0.01';
+
 # Recognized constructor options:
 # - host (base URL)
 # - basepath (top-level metric to scan)
@@ -75,3 +77,71 @@ sub log_warning {
 }
 
 1;
+
+=head1 NAME
+
+Graphite::Enumerator - Utility module to recursively enumerate graphite metrics
+
+=head1 SYNOPSIS
+
+    my $gren = Graphite::Enumerator->new(
+        host => 'https://graphite.example.com',
+        basepath => 'general.metrics',
+        lwp_options => {
+            env_proxy => 1,
+            keep_alive => 1,
+        },
+    );
+    $gren->enumerate(sub {
+        my ($path) = @_;
+        print "Found metric $path !\n";
+    });
+
+=head1 METHODS
+
+=head2 Graphite::Enumerator->new(%args)
+
+The constructor recognizes 3 arguments:
+
+  host => host name (in that case, the protocol defaults to http) or base URL
+  basepath => top-level metric namespace to scan
+  lwp_options => hash of options to initialize LWP::UserAgent internally
+
+=head2 $g->enumerate($coderef)
+
+Calls C<$coderef> for each metric under the basepath, with one parameter,
+which is the metric name as a string.
+
+=head2 $g->host
+
+Returns the host passed to the constructor (with eventually
+C<http://> prepended).
+
+=head2 $g->ua
+
+Returns the internal LWP::UserAgent object.
+
+=head2 $g->log_message($message)
+
+Prints the C<$message> to STDOUT.
+
+=head2 $g->log_warning($message)
+
+Warns about the C<$message>.
+
+=head1 ACKNOWLEDGMENT
+
+This module was originally developed for Booking.com.
+With approval from Booking.com, this module was generalized
+and put on CPAN, for which the author would like to express
+his gratitude.
+
+=head1 AUTHOR
+
+Rafael Garcia-Suarez, E<lt>rgs@consttype.orgE<gt>
+
+This code is available under the same license as Perl version 5.10.1 or higher.
+
+A git repository for this module is available at L<https://github.com/rgs/Graphite-Enumerator>.
+
+=cut
