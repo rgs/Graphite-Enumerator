@@ -1,0 +1,4 @@
+- Add command-line parameters to the example script.
+- Add recursion level to the callback.
+- Add maximum depth.
+- Accept wildcards in the base path.
