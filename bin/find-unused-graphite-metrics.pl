@@ -1,18 +1,24 @@
 #!perl
 
-# Finds all metrics in the general.metrics.* namespace that have
-# not been written to in the last day.
+# Finds all metrics in the <$basepath>.* namespace that have
+# not been written to in the $interval (by default last day).
 
 use 5.14.1;
 use Graphite::Enumerator;
 use JSON;
+use Getopt::Long;
 
 my $interval = '1day';
-my $verbose = 0;
+my $basepath = '';
+GetOptions(
+    "interval=s" => \$interval,
+    "path=s"     => \$basepath,
+    "v"          => \my $verbose,
+);
 
 my $gren = Graphite::Enumerator->new(
     host => 'https://graphite.example.com',
-    basepath => 'general.metrics',
+    basepath => $basepath,
     lwp_options => {
         env_proxy => 0,
         keep_alive => 1,
