@@ -29,8 +29,9 @@ sub new {
 }
 
 sub enumerate {
-    my ($self, $callback, $path) = @_;
+    my ($self, $callback, $path, $level) = @_;
     $path //= $self->{basepath};
+    $level //= 0;
     my $url = $self->{_finder} . $path;
     my $res = $self->{_ua}->get($url);
     if ($res->is_success) {
@@ -42,10 +43,10 @@ sub enumerate {
         return 0 if !$completer_answer->{metrics};
         for my $metric (@{ $completer_answer->{metrics} }) {
             if ($metric->{is_leaf}) {
-                $callback->($metric->{path});
+                $callback->($metric->{path}, $level);
             }
             else {
-                $self->enumerate($callback, $metric->{path});
+                $self->enumerate($callback, $metric->{path}, $level + 1);
             }
         }
         return 1;
@@ -109,8 +110,9 @@ The constructor recognizes 3 arguments:
 
 =head2 $g->enumerate($coderef)
 
-Calls C<$coderef> for each metric under the basepath, with one parameter,
-which is the metric name as a string.
+Calls C<$coderef> for each metric under the basepath, with two parameters:
+1. the metric name as a string; 2. the depth level of the metric relative
+to the base path (starting at 0).
 
 =head2 $g->host
 
