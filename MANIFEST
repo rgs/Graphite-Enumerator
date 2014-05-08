@@ -1,0 +1,7 @@
+Makefile.PL
+MANIFEST
+bin/find-unused-graphite-metrics.pl
+bin/graphite-ls.pl
+lib/Graphite/Enumerator.pm
+t/00basic.t
+t/pod.t
