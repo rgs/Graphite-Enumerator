@@ -2,7 +2,6 @@
 
 use 5.14.1;
 use Graphite::Enumerator;
-use JSON;
 
 my $basepath = shift // '';
 my $gren = Graphite::Enumerator->new(
