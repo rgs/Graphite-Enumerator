@@ -4,6 +4,7 @@ use 5.14.1;
 use Carp qw/croak/;
 use LWP::UserAgent;
 use JSON;
+use Scalar::Util 'reftype';
 
 our $VERSION = '0.01';
 
@@ -30,6 +31,9 @@ sub new {
 
 sub enumerate {
     my ($self, $callback, $path, $level) = @_;
+    if (reftype $callback ne "ARRAY") {
+        $callback = [ $callback ];
+    }
     $path //= $self->{basepath};
     $level //= 0;
     my $url = $self->{_finder} . $path;
@@ -42,8 +46,9 @@ sub enumerate {
         }
         return 0 if !$completer_answer->{metrics};
         for my $metric (@{ $completer_answer->{metrics} }) {
+            next if ($callback->[1] && $callback->[1]($metric->{path}, $level));
             if ($metric->{is_leaf}) {
-                $callback->($metric->{path}, $level);
+                $callback->[0]($metric->{path}, $level);
             }
             else {
                 $self->enumerate($callback, $metric->{path}, $level + 1);
@@ -110,9 +115,18 @@ The constructor recognizes 3 arguments:
 
 =head2 $g->enumerate($coderef)
 
+=head2 $g->enumerate([ $coderef, $filter_coderef ])
+
 Calls C<$coderef> for each metric under the basepath, with two parameters:
 1. the metric name as a string; 2. the depth level of the metric relative
 to the base path (starting at 0).
+
+If an array reference of 2 coderefs is provided, the second coderef will be
+used as a an input filter called with the same parameters as above. This will
+allow, for instance, to stop recursion on a given path by providing a regex, or
+to stop recursion past a certain level. The code should return false to allow
+further processing, and true, indicating a match, to prevent further processing
+along that path.
 
 =head2 $g->host
 
