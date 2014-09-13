@@ -10,4 +10,14 @@ WriteMakefile(
         JSON => 0,
         'LWP::UserAgent' => 0,
     },
+    META_MERGE => {
+        'meta-spec' => { version => 2 },
+        resources => {
+            repository => {
+                type => 'git',
+                url  => 'https://github.com/rgs/Graphite-Enumerator.git',
+                web  => 'https://github.com/rgs/Graphite-Enumerator',
+            },
+        },
+    },
 );
