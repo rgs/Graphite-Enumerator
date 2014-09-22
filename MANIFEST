@@ -1,6 +1,7 @@
 Makefile.PL
 MANIFEST
 META.yml
+README.md
 bin/find-unused-graphite-metrics.pl
 bin/graphite-ls.pl
 lib/Graphite/Enumerator.pm
