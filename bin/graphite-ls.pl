@@ -14,7 +14,8 @@ my $gren = Graphite::Enumerator->new(
     },
 );
 
-$gren->enumerate( sub {
+my $count = $gren->enumerate( sub {
     my ($path) = @_;
     say $path;
 } );
+say "- $count metrics found";

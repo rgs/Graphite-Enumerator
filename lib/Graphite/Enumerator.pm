@@ -45,16 +45,18 @@ sub enumerate {
             return 0;
         }
         return 0 if !$completer_answer->{metrics};
+        my $count = 0;
         for my $metric (@{ $completer_answer->{metrics} }) {
             next if ($callback->[1] && $callback->[1]($metric->{path}, $level));
             if ($metric->{is_leaf}) {
                 $callback->[0]($metric->{path}, $level);
+                ++$count;
             }
             else {
-                $self->enumerate($callback, $metric->{path}, $level + 1);
+                $count += $self->enumerate($callback, $metric->{path}, $level + 1);
             }
         }
-        return 1;
+        return $count;
     }
     else {
         $self->log_warning("Can't get <$url>: " . $res->status_line);
@@ -122,11 +124,13 @@ Calls C<$coderef> for each metric under the basepath, with two parameters:
 to the base path (starting at 0).
 
 If an array reference of 2 coderefs is provided, the second coderef will be
-used as a an input filter called with the same parameters as above. This will
+used as an input filter called with the same parameters as above. This will
 allow, for instance, to stop recursion on a given path by providing a regex, or
 to stop recursion past a certain level. The code should return false to allow
 further processing, and true, indicating a match, to prevent further processing
 along that path.
+
+enumerate() returns the number of metrics found (or 0 on error).
 
 =head2 $g->host
 
