@@ -3,6 +3,12 @@
 use 5.14.1;
 use Graphite::Enumerator;
 
+@ARGV or do {
+    print <<USAGE;
+Usage: $0 http://graphite.example.com my.metric.prefix
+USAGE
+    exit;
+};
 my $host = shift; # e.g. 'http://graphite.example.com'
 my $basepath = shift // '';
 my $gren = Graphite::Enumerator->new(
