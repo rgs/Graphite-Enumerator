@@ -1,11 +1,12 @@
-#!perl
+#!perl -s
 
 use 5.14.1;
 use Graphite::Enumerator;
 
 @ARGV or do {
     print <<USAGE;
-Usage: $0 http://graphite.example.com my.metric.prefix
+Usage: $0 [-t] http://graphite.example.com my.metric.prefix
+-t trims the prefix from the output
 USAGE
     exit;
 };
@@ -22,6 +23,7 @@ my $gren = Graphite::Enumerator->new(
 
 my $count = $gren->enumerate( sub {
     my ($path) = @_;
+    $path =~ s/^\Q$basepath.// if our $t;
     say $path;
 } );
 say "- $count metrics found";
