@@ -37,6 +37,8 @@ sub enumerate {
     $path //= $self->{basepath};
     $level //= 0;
     my $url = $self->{_finder} . $path;
+    $url .= '.' if $url !~ /[*.]$/;
+    $url .= '*' if $url =~ /\.$/;
     my $res = $self->{_ua}->get($url);
     if ($res->is_success) {
         my $completer_answer = eval { decode_json($res->content) };
