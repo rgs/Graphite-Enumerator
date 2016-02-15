@@ -6,7 +6,7 @@ use LWP::UserAgent;
 use JSON;
 use Scalar::Util 'reftype';
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 # Recognized constructor options:
 # - host (base URL)
